@@ -1,0 +1,43 @@
+# DigitalOcean App Platform — static site (free Starter tier).
+#
+# This is the React/vinext rebuild of ApexWrapLab. It ships as a *static* site
+# rather than a service: every route is a client component with no server APIs,
+# so `vinext build --prerender-all` can render both pages to HTML at build time
+# and nothing needs to run per-request. That keeps it on the free tier and off
+# the Cloudflare Workers runtime vinext targets by default.
+#
+# scripts/build-static.mjs merges vinext's split output (client assets in
+# dist/client, prerendered HTML in dist/server/prerendered-routes) into out/.
+#
+# Create with:  doctl apps create --spec .do/app.yaml
+# Or: DO control panel → Create → Apps → GitHub → iovmada/apex-site
+
+name: apex-site
+region: fra                        # Frankfurt — nearest region to RO
+
+static_sites:
+  - name: web
+    github:
+      repo: iovmada/apex-site
+      branch: main
+      deploy_on_push: true         # every push to main redeploys
+
+    build_command: npm run build:static
+    output_dir: /out
+
+    index_document: index.html
+
+    # There is a real prerendered 404 page, so unmatched paths should land on it
+    # rather than being rewritten to index.html. Both real routes (/ and /shop)
+    # exist as static files, so no catchall is needed.
+    error_document: 404.html
+
+# Node version comes from "engines" in package.json (>=22.13.0). vinext will not
+# run on older majors, so do not let the buildpack fall back to a default.
+
+# Add the domain only AFTER this deploy is verified and you are ready to move
+# apexwraplab.com off the old iovmada/ApexWrapLab static site.
+# domains:
+#   - domain: apexwraplab.com
+#     type: PRIMARY
+#     zone: apexwraplab.com
