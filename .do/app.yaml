@@ -1,48 +1,70 @@
-# DigitalOcean App Platform — static site (free Starter tier).
+# DigitalOcean App Platform — the live `apex` app (serves apexwraplab.com).
 #
-# This is the React/vinext rebuild of ApexWrapLab. It ships as a *static* site
-# rather than a service: every route is a client component with no server APIs,
-# so `vinext build --prerender-all` can render both pages to HTML at build time
-# and nothing needs to run per-request. That keeps it on the free tier and off
-# the Cloudflare Workers runtime vinext targets by default.
+# This spec REPLACES the source of the existing app, which previously built the
+# hand-written static site from iovmada/ApexWrapLab. Mirrors the live spec as of
+# 2026-09-05 with only the source and build fields changed.
 #
-# scripts/build-static.mjs merges vinext's split output (client assets in
-# dist/client, prerendered HTML in dist/server/prerendered-routes) into out/.
+# Three things here are load-bearing and must not be "tidied":
 #
-# This REPLACES the source of the existing `apexwraplab` app, which previously
-# built from iovmada/ApexWrapLab (the hand-written static site). The app name,
-# region and component name are kept identical so DO updates the app in place
-# rather than tearing it down and recreating it.
+#  1. static_sites[0].name MUST stay `apexwraplab`. ingress.rules[].component.name
+#     points at it; renaming the component breaks routing to the domains.
+#  2. environment_slug MUST be node-js, not html. The `html` slug is the plain
+#     static buildpack with no Node toolchain — it cannot run npm, so the build
+#     command would never execute and the deploy would publish nothing.
+#  3. The domains block must stay intact or apexwraplab.com detaches from the app.
 #
 # Apply with:  doctl apps update <app-id> --spec .do/app.yaml
-# Or: DO control panel → Apps → apexwraplab → Settings → App Spec → Edit
-#
-# ⚠ The live spec may carry a `domains:` block added through the UI that is not
-# reproduced here. Preserve whatever the live spec shows, or saving this will
-# detach apexwraplab.com from the app.
+# Or: DO control panel → Apps → apex → Settings → App Spec → Edit
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
 
-name: apexwraplab
-region: fra                        # Frankfurt — nearest region to RO
+domains:
+  - domain: apexwraplab.com
+    type: PRIMARY
+    zone: apexwraplab.com
+  - domain: www.apexwraplab.com
+    type: ALIAS
+    zone: apexwraplab.com
+
+features:
+  - buildpack-stack=ubuntu-22
+
+ingress:
+  rules:
+    - component:
+        name: apexwraplab
+      match:
+        authority:
+          exact: ''
+        path:
+          prefix: /
+
+name: apex
+region: fra
 
 static_sites:
-  - name: preview                  # kept from the old spec — renaming recreates it
-    github:
-      repo: iovmada/apex-site
-      branch: main
-      deploy_on_push: true         # every push to main redeploys
+  - name: apexwraplab
+    # was: html — that buildpack has no Node and cannot run the build command
+    environment_slug: node-js
 
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: iovmada/apex-site
+
+    source_dir: /
+
+    # Every route is a client component with no server APIs, so --prerender-all
+    # renders both pages at build time and this stays a static site on the free
+    # tier. build-static.mjs merges vinext's split output into out/.
     build_command: npm run build:static
     output_dir: /out
 
     index_document: index.html
-
-    # There is a real prerendered 404 page, so unmatched paths should land on it
-    # rather than being rewritten to index.html. Both real routes (/ and /shop)
-    # exist as static files, so no catchall is needed.
+    # Real prerendered 404 exists, and both routes (/ and /shop) are real files,
+    # so unmatched paths should 404 rather than be rewritten to index.html.
     error_document: 404.html
 
-# Node version comes from "engines" in package.json (>=22.13.0). vinext will not
-# run on older majors, so do not let the buildpack fall back to a default.
-
-# domains: intentionally omitted — see the warning above. Copy the block from the
-# live spec verbatim if one is present there.
+# Node version comes from "engines" (>=22.13.0) in package.json. vinext fails on
+# older majors with `SyntaxError: Unexpected token '??='`.
