@@ -9,14 +9,23 @@
 # scripts/build-static.mjs merges vinext's split output (client assets in
 # dist/client, prerendered HTML in dist/server/prerendered-routes) into out/.
 #
-# Create with:  doctl apps create --spec .do/app.yaml
-# Or: DO control panel → Create → Apps → GitHub → iovmada/apex-site
+# This REPLACES the source of the existing `apexwraplab` app, which previously
+# built from iovmada/ApexWrapLab (the hand-written static site). The app name,
+# region and component name are kept identical so DO updates the app in place
+# rather than tearing it down and recreating it.
+#
+# Apply with:  doctl apps update <app-id> --spec .do/app.yaml
+# Or: DO control panel → Apps → apexwraplab → Settings → App Spec → Edit
+#
+# ⚠ The live spec may carry a `domains:` block added through the UI that is not
+# reproduced here. Preserve whatever the live spec shows, or saving this will
+# detach apexwraplab.com from the app.
 
-name: apex-site
+name: apexwraplab
 region: fra                        # Frankfurt — nearest region to RO
 
 static_sites:
-  - name: web
+  - name: preview                  # kept from the old spec — renaming recreates it
     github:
       repo: iovmada/apex-site
       branch: main
@@ -35,9 +44,5 @@ static_sites:
 # Node version comes from "engines" in package.json (>=22.13.0). vinext will not
 # run on older majors, so do not let the buildpack fall back to a default.
 
-# Add the domain only AFTER this deploy is verified and you are ready to move
-# apexwraplab.com off the old iovmada/ApexWrapLab static site.
-# domains:
-#   - domain: apexwraplab.com
-#     type: PRIMARY
-#     zone: apexwraplab.com
+# domains: intentionally omitted — see the warning above. Copy the block from the
+# live spec verbatim if one is present there.
