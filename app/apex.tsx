@@ -502,9 +502,7 @@ export default function Apex({
             navigate(false);
           }}
           aria-label="Apex Wrap Lab home"
-        >
-          <img src="/images/logo.svg" alt="Apex Wrap Lab" />
-        </a>
+        />
         <nav aria-label={t('Main navigation', 'Navigare principală')}>
           <a
             href="/shop"
@@ -1088,9 +1086,8 @@ export default function Apex({
                 e.preventDefault();
                 navigate(false);
               }}
-            >
-              <img src="/images/logo.svg" alt="Apex Wrap Lab" />
-            </a>
+              aria-label="Apex Wrap Lab home"
+            />
             <p>
               {t(
                 'Precision-cut. Rider-driven.',

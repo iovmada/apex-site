@@ -37,6 +37,9 @@
   --accent: #31382b;
   --border: #363a30;
   --yellow: #dcfa32;
+  /* Neon that stays legible in both themes: full #dcfa32 on the dark
+     ground, darkened on light where the raw neon washes out. */
+  --primary-ink: #dcfa32;
   --muted-text: #a5a99f;
   --font-heading: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --radius: 0px;
@@ -52,6 +55,7 @@
   --muted-foreground: #626b56;
   --muted-text: #626b56;
   --accent: #e1e6d3;
+  --primary-ink: #5c6b14;
   --border: #cbd0c1;
   color-scheme: light;
 }
@@ -150,11 +154,22 @@ h3 {
   z-index: 20;
 }
 .logo {
+  /* The mark is a CSS mask rather than an <img> so it inherits the theme
+     colour token directly. One asset serves both themes, replacing the old
+     `filter: brightness()` trick that could only ever fake a flat dark logo.
+     aspect-ratio matches the artwork box, so the width overrides at each
+     breakpoint below keep working without a paired height. */
   width: 228px;
+  aspect-ratio: 698.88 / 97.9;
   flex-shrink: 0;
+  display: block;
+  background-color: var(--primary-ink);
+  -webkit-mask: url('/images/logo.svg') no-repeat center / contain;
+  mask: url('/images/logo.svg') no-repeat center / contain;
+  transition: background-color 0.35s ease;
 }
-.light .logo img {
-  filter: brightness(0.1);
+.logo:hover {
+  background-color: var(--foreground);
 }
 .header nav {
   display: flex;
