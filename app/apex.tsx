@@ -444,7 +444,15 @@ export default function Apex({
     noFit = fitReady && fitCount === 0;
   const finder = (
     <div className="finder">
-      <BrandSlider lang={lang} />
+      <BrandSlider
+        lang={lang}
+        value={filters.make}
+        onPick={(make) => {
+          update("make", make);
+          setYear("All");
+        }}
+        onCustom={() => navigate(false, "#custom")}
+      />
       <div className="finder-head">
         <div className="eyebrow">{t("FIND YOUR FIT", "GĂSEȘTE KITUL TĂU")}</div>
         <h2>{t("WHAT DO YOU RIDE?", "CE CONDUCI?")}</h2>

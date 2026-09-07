@@ -172,6 +172,38 @@ export function modelYears(model: string): string[] {
   const [from, to] = info.years;
   return Array.from({ length: to - from + 1 }, (_, i) => String(to - i));
 }
+/** The brand strip. Order is deliberate: the brands we cut templates for come
+ *  first, so the front of the marquee is always shoppable.
+ *
+ *  `supported` is DERIVED from MODELS rather than stored — the strip used to
+ *  drift from the finder (it advertised four brands the finder had no models
+ *  for), and deriving it means that can't happen again. A brand with no
+ *  template isn't dropped: it routes to the Custom Lab instead, which is true
+ *  and a better answer than an empty grid.
+ *
+ *  `logo` is a slug in /public/images/brands. Every file there has had its
+ *  viewBox tightened to its own ink (measured with getBBox), which is what lets
+ *  ONE css rule size all nine evenly — the stock Simple Icons artwork sits in a
+ *  square 24x24 box regardless of shape, so KTM's slab wordmark filled only 31%
+ *  of its box height and rendered a third the size of the round marks under
+ *  `mask-size: contain`. Tight viewBoxes mean no per-brand fudge factors.
+ *
+ *  Can-Am has no SVG on hand, so it falls back to a typographic plate; drop a
+ *  can-am.svg in (viewBox tightened to the ink) and it picks it up with no
+ *  code change. */
+export type Brand = { name: string; logo?: string };
+export const BRAND_STRIP: Brand[] = [
+  { name: "KTM", logo: "ktm" },
+  { name: "Husqvarna", logo: "husqvarna" },
+  { name: "Yamaha", logo: "yamaha" },
+  { name: "Honda", logo: "honda" },
+  { name: "Can-Am" },
+  { name: "Kawasaki", logo: "kawasaki" },
+  { name: "Suzuki", logo: "suzuki" },
+  { name: "Ducati", logo: "ducati" },
+  { name: "BMW Motorrad", logo: "bmw" },
+];
+export const brandSupported = (name: string) => name in MODELS;
 export const COLORS = [
   { n: "Volt", hex: "#dcfa32" },
   { n: "Podium Yellow", hex: "#ffd400" },
