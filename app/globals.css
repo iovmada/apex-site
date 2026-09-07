@@ -723,10 +723,6 @@ h3 {
   background: none;
   color: var(--foreground);
   cursor: pointer;
-  transition:
-    background-color 0.22s ease,
-    opacity 0.22s ease,
-    color 0.22s ease;
 }
 /* Masked rather than <img> so a single colour rule restyles every mark: full
    ink for a brand we cut for, faded for custom-only, acid once selected. */
@@ -750,17 +746,9 @@ h3 {
   text-transform: uppercase;
   white-space: nowrap;
 }
-.brand-plate:hover {
-  background: #11180a12;
-}
-/* Custom-only brands stay readable but visibly secondary: they lead to the
-   Custom Lab, not to a grid of kits. */
-.brand-plate.is-custom {
-  opacity: 0.4;
-}
-.brand-plate.is-custom:hover {
-  opacity: 0.66;
-}
+/* Every mark sits at full ink — no hover tint, and no faded treatment for the
+   brands we hold no template for. They read as one even row of logos; the
+   custom-only ones differ in where they lead, not in how they look. */
 .brand-plate.is-active {
   background: #11180a;
   color: var(--yellow);

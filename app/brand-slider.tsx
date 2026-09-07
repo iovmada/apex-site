@@ -60,14 +60,6 @@ export default function BrandSlider({
             tabIndex={clone ? -1 : undefined}
             aria-pressed={supported ? active : undefined}
             onClick={() => (supported ? onPick(brand.name) : onCustom())}
-            title={
-              supported
-                ? t(`Show ${brand.name} kits`, `Vezi kiturile ${brand.name}`)
-                : t(
-                    `No stock template for ${brand.name} yet — design a custom kit`,
-                    `Încă nu avem șablon pentru ${brand.name} — creează un kit propriu`,
-                  )
-            }
           >
             {brand.logo ? (
               <span
