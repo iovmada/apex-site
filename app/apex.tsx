@@ -657,10 +657,10 @@ export default function Apex({
             <section className="hero" id="top">
               <img
                 className="hero-photo"
-                src="/images/hero-livery.jpg"
+                src="/images/hero-motocross-graphics-kit.jpg"
                 alt={t(
-                  "Enduro rider in a black and volt yellow livery carving a gravel corner",
-                  "Pilot de enduro cu grafică neagră și galbenă pe un traseu cu pietriș",
+                  "Custom motocross graphics kit in black and volt yellow — a precision-cut Apex Wrap Lab vinyl wrap on an enduro dirt bike in the workshop",
+                  "Kit de grafică motocross personalizat, negru cu galben neon — folie vinil decupată la precizie Apex Wrap Lab pe o motocicletă enduro, în atelier",
                 )}
                 fetchPriority="high"
               />
